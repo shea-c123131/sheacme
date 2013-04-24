@@ -1,27 +1,28 @@
-var fileSystem = require('fs');
+var fs = require('fs');
 var express = require("express");
 var app = express();
 var AWS = require('aws-sdk');
 app.use(express.logger());
+var acc_key_id;
+var sec_acc_key;
+var dynamodb;
 
 app.get('/', function(request, response) {
 	if(process.env.ACCKEYID){
-		var acc_key_id=process.env.ACCKEYID;
-		var sec_acc_key=process.env.SECACCKEY;
+		acc_key_id=process.env.ACCKEYID;
+		sec_acc_key=process.env.SECACCKEY;
 	}else{
 		fs.readFile('acc_key_id.txt', 'utf8', function (err,data) {
-  			var acc_key_id=data;
+  			acc_key_id=data;
 		});
 		fs.readFile('sec_acc_key.txt', 'utf8', function (err,data) {
-  			var sec_acc_key=data;
-		});
-	}
-	var dynamodb = new AWS.DynamoDB({
+  			sec_acc_key=data;
+  			dynamodb = new AWS.DynamoDB({
 		accessKeyId:acc_key_id,
 		secretAccessKey:sec_acc_key,
 		region: 'us-east-1'
 	});
-	dynamodb.putItem({
+  				dynamodb.putItem({
 		TableName:'nodedb',
 		Item:{
 			path:{S:'something'},
@@ -41,6 +42,11 @@ app.get('/', function(request, response) {
 	}, function(err, data){
 		response.send(data['Item']['somet']['S']);
 	});
+		});
+		
+
+	}
+	
   
 });
 
