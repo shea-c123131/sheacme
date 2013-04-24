@@ -6,8 +6,8 @@ app.use(express.logger());
 
 app.get('/', function(request, response) {
 	var dynamodb = new AWS.DynamoDB({
-		accessKeyId:ACCKEYID,
-		secretAccessKey:SECACCKEY,
+		accessKeyId:process.env.ACCKEYID,
+		secretAccessKey:process.env.SECACCKEY,
 		region: 'us-east-1'
 	});
 	dynamodb.putItem({
